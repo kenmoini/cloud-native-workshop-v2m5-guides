@@ -132,8 +132,8 @@ First, take the RH SSO Route and access it as an environmental variable:
 
 [source,sh,role="copypaste"]
 ----
-RH_SSO_ROUTE=$(oc get route sso -n {{ USER_ID}}-sso -o jsonpath='{.status.ingress[0].host}')
-APPS_ROUTE_BASE=$(oc get route sso -n {{ USER_ID}}-sso -o jsonpath='{.status.ingress[0].routerCanonicalHostname}')
+RH_SSO_ROUTE=$(oc get route secure-sso -n {{ USER_ID}}-sso -o jsonpath='{.status.ingress[0].host}')
+APPS_ROUTE_BASE=$(oc get route secure-sso -n {{ USER_ID}}-sso -o jsonpath='{.status.ingress[0].routerCanonicalHostname}')
 ----
 
 Next, template out the ConfigMap and pipe into the `oc` CLI:
@@ -208,5 +208,77 @@ oc apply -n {{ USER_ID}}-sso  -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-l
 oc apply -n {{ USER_ID}}-sso  -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/static-frontend/openshift/02-service.yaml && \
 oc apply -n {{ USER_ID}}-sso  -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/static-frontend/openshift/03-route.yaml
 ----
+
+There are two more applications that need to be deployed - next is the *PetID Backend* which has a templated Deployment.
+
+First, apply the supporting PetID Backend manifests:
+
+[source,sh,role="copypaste"]
+----
+oc apply -n {{ USER_ID}}-sso  -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/go-nodejs-pet-id/go-usvc/openshift/step1/01-configmap.yaml && \
+oc apply -n {{ USER_ID}}-sso  -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/go-nodejs-pet-id/go-usvc/openshift/step1/02-service.yaml && \
+oc apply -n {{ USER_ID}}-sso  -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/go-nodejs-pet-id/go-usvc/openshift/step1/04-route.yaml
+----
+
+Next, deploy the application - the templated components are with the environmental variables set on the container.
+
+[source,sh,role="copypaste"]
+----
+cat <<EOF | oc apply -n {{ USER_ID}}-sso -f -
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pet-id-backend
+  labels:
+    app: pet-id-backend
+    app.kubernetes.io/name: pet-id-backend
+    app.kubernetes.io/part-of: pet-id
+    component: deployment
+  annotations:
+    app.openshift.io/connects-to: >-
+      [{"apiVersion":"apps.openshift.io/v1","kind":"DeploymentConfig","name":"petid-db"}]
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pet-id-backend
+      component: deployment
+  template:
+    metadata:
+      labels:
+        app: pet-id-backend
+        component: deployment
+    spec:
+      containers:
+      - name: pet-id-backend
+        imagePullPolicy: Always
+        image: quay.io/kenmoini/pet-id-backend:latest
+        ports:
+        - containerPort: 8080
+          name: pet-id-backend
+        env:
+          - name: KEYCLOAK_SERVER
+            value: http://sso:8080/auth
+          - name: KEYCLOAK_REALM
+            value: petcorp
+          - name: KEYCLOAK_CLIENT_ID
+            value: pet-id
+          - name: THREE_SCALE_SECRET_HEADER
+            value: someSecretHeaderKeyValue
+        volumeMounts:
+          - name: config
+            mountPath: "/opt/app-root/"
+            readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: pet-id-backend-config-yml
+            items:
+              - key: "config.yml"
+                path: "config.yml"
+EOF
+----
+
+
 
 ### 5. Explore Applications
