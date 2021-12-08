@@ -140,15 +140,15 @@ image::rhsso_client_config_pet-id.png[sso, 1100]
 
 ==== Furever Home Client
 
-1. In the left-hand pane, navigate to *Clients* and then click *Create* to the right
+> In the left-hand pane, navigate to *Clients* and then click *Create* to the right
 
 image::rhsso_create_client_button.png[sso, 1100]
 
-2. Give it a Client ID of `furever-home` - click *Save*
+> Give it a Client ID of `furever-home` - click *Save*
 
 image::rhsso_create_client_furever-home.png[sso, 1100]
 
-3. Configure the Client Settings with the following:
+> Configure the Client Settings with the following:
 
 - *Login Theme*: rh-sso
 - *Valid Redirect URIs*: *
