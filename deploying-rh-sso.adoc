@@ -178,7 +178,9 @@ Create a user with the following information:
 
 image::rhsso_add_user_luser.png[sso, 1100]
 
-With the user created, click the *Credentials* tab and set the password for the user to - set it to something like `password`.  Make sure to set *Temporary* to Off!
+With the user created, click the *Credentials* tab and set the password for the user to - set it to something like `password`.
+
+Make sure to set *Temporary* to Off!
 
 image::rhsso_set_user_password_luser.png[sso, 1100]
 
@@ -194,7 +196,8 @@ Create another user with the following information:
 
 image::rhsso_add_user_sadmin.png[sso, 1100]
 
-With the user created, click the *Credentials* tab and set the password for the user to - set it to something like `password`.  Make sure to set *Temporary* to Off!
+With the user created, click the *Credentials* tab and set the password for the user to - set it to something like `password`.
+
+Make sure to set *Temporary* to Off!
 
 image::rhsso_set_user_password_sadmin.png[sso, 1100]
- 
