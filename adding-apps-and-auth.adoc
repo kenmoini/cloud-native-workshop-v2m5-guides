@@ -94,28 +94,28 @@ With all the dependent services deployed we can now provision our actual applica
 Navigate back to your {{ ECLIPSE_CHE_URL }}[CodeReady Workspaces Terminal^] if you're not already in it.
 ====
 
-Deploy the Furever Home Backend Python application:
+Deploy the *Furever Home Backend* Python application:
 
 [source,sh,role="copypaste"]
 ----
 oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/python-backend/openshift/
 ----
 
-Deploy the Furever Home Add Adoptee Python service:
+Deploy the *Furever Home Add Adoptee* Python service:
 
 [source,sh,role="copypaste"]
 ----
 oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/python-add-adoptee-usvc/openshift/add-adoptee-usvc/01-deployment.yaml
 ----
 
-Deploy the Furever Home Process Adoptee Python service:
+Deploy the *Furever Home Process Adoptee* Python service:
 
 [source,sh,role="copypaste"]
 ----
 oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/python-process-adoptee-usvc/openshift/process-adoptee-usvc/01-deployment.yaml
 ----
 
-Deploy the Furever Home Adoption Judge Python service:
+Deploy the *Furever Home Adoption Judge* Python service:
 
 [source,sh,role="copypaste"]
 ----
@@ -124,9 +124,9 @@ oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-la
 
 At this point, the {{ CONSOLE_URL }}/topology/ns/{{ USER_ID }}-sso[Topology View^] of the {{ USER_ID }}-sso project should look something like this:
 
-INSERT_IMAGE_OF_TOPOLOGY
+image::rhsso_basic_app_topology.png[sso, 885]
 
-Those were the easy to deploy applications where the manifests are already composed - next let's deploy the Furever Home Frontend which will need a ConfigMap to set parameters for the application to consume.
+Those were the easy to deploy applications where the manifests are already composed - next let's deploy the *Furever Home Frontend* which will need a ConfigMap to set parameters for the application to consume.
 
 First, take the RH SSO Route and access it as an environmental variable:
 
