@@ -116,22 +116,50 @@ image::rhsso_realm_themes_config.png[sso, 1100]
 
 === 4. Create Application Clients
 
-- Add Clients:
-  - PetID Front End
-    - Name: pet-id
-    - Client Protocol: OpenID Connect
-    - Click CREATE
-    
-    - Set Login Theme to rh-sso
-    - Valid Redirect URIs: *
-    - Web Origins: *
-  - Furever Home Front End
-    - Name: furever-home
-    - Client Protocol: OpenID Connect
-    - Click CREATE
+*Clients* are entities that can request Keycloak to authenticate a user. Most often, clients are applications and services that want to use Keycloak to secure themselves and provide a single sign-on solution. Clients can also be entities that just want to request identity information or an access token so that they can securely invoke other services on the network that are secured by Keycloak.
 
-    - Set Login Theme to rh-sso
-    - Valid Redirect URIs: *
+We will add two Clients to this Petcorp Realm.
+
+==== PetID Client
+
+1. In the left-hand pane, navigate to *Clients* and then click *Create* to the right
+
+image::rhsso_create_client_button.png[sso, 1100]
+
+2. Give it a Client ID of `pet-id` - click *Save*
+
+image::rhsso_create_client_pet-id.png[sso, 1100]
+
+3. Configure the Client Settings with the following:
+
+- *Login Theme*: rh-sso
+- *Valid Redirect URIs*: *
+- *Web Origins*: *
+
+image::rhsso_client_config_pet-id.png[sso, 1100]
+
+==== Furever Home Client
+
+1. In the left-hand pane, navigate to *Clients* and then click *Create* to the right
+
+image::rhsso_create_client_button.png[sso, 1100]
+
+2. Give it a Client ID of `furever-home` - click *Save*
+
+image::rhsso_create_client_furever-home.png[sso, 1100]
+
+3. Configure the Client Settings with the following:
+
+- *Login Theme*: rh-sso
+- *Valid Redirect URIs*: *
+- *Web Origins*: *
+
+image::rhsso_client_config_furever-home.png[sso, 1100]
+
+=== 5. Create Users
+
+We are logged into the RH SSO Administrative Console but this user is not part of this Realm - in fact, this Realm has no users so before we can use our secured applications we need a user or two.
+    
 - Create Users - The userNN is the admin, there needs to be Realm users
   - Create user, give username, email @example.com, First/Last, both verified
   - Credentials tab, Set password, toggle to not Temporary
