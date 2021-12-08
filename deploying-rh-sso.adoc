@@ -58,15 +58,14 @@ image::rhsso-topology.png[sso, 700]
 
 Since we instantiated the RH SSO template with the default parameters, a random admin username and password are generated.  We can find the credentials by looking at the `sso` DeploymentConfig.
 
-Run the following labels in CodeReady Workspaces Terminal:
+Run the following labels in {{ ECLIPSE_CHE_URL }}[the CodeReady Workspaces Terminal^]:
 
 [source,sh,role="copypaste"]
 ----
 SSO_ADMIN_USER=$(oc get dc sso -n {{ USER_ID}}-sso -o jsonpath='{.spec.template.spec.containers[0].env}' | jq -r '.[] | select(.name | test("SSO_ADMIN_USERNAME")).value')
 SSO_ADMIN_PASS=$(oc get dc sso -n {{ USER_ID}}-sso -o jsonpath='{.spec.template.spec.containers[0].env}' | jq -r '.[] | select(.name | test("SSO_ADMIN_PASSWORD")).value')
 
-echo "Admin User: ${SSO_ADMIN_USER}"
-echo "Admin Pass: ${SSO_ADMIN_PASS}"
+echo -e "\nAdmin User: ${SSO_ADMIN_USER}\nAdmin Pass: ${SSO_ADMIN_PASS}\n"
 ----
 
 [NOTE]
@@ -88,16 +87,35 @@ First we must create a *Realm*.
 
 A Realm manages a set of users, credentials, roles, and groups. A user belongs to and logs into a realm. Realms are isolated from one another and can only manage and authenticate the users that they control.
 
-- Create Petcorp Realm
-- Configure Realm:
-  - General, Display Name: `Pet Corp`
-  - General, HTML Display Name: `<div class="kc-logo-text"><span>MyPurrina</span></div>`
-  - General - CLICK SAVE
-  - Login, Login With Email: OFF
-  - Login, Require SSL: False
-  - Login - CLICK SAVE
-  - Themes, Set All to RH SSO
-  - Themes - CLICK SAVE
+In the upper left corner of the RH SSO Administration Console, hover over *Master* until the Realm Dropdown appears - *click Add realm*
+
+image::rhsso_add-realm-button.png[sso, 420]
+
+Give the Realm the name of _*petcorp*_ - then click
+
+image::rhsso_add-realm.png[sso, 1020]
+
+Set the following additional configuration for the Realm in the General Tab:
+
+  - *General tab, Display Name:* `Pet Corp`
+  - *General tab, HTML Display Name:* `<div class="kc-logo-text"><span>MyPurrina</span></div>`
+  - *General tab*: CLICK SAVE
+
+image::rhsso_realm_general_config.png[sso, 1100]
+
+  - *Login tab, Login With Email*: OFF
+  - *Login tab, Require SSL*: None
+  - *Login tab*: CLICK SAVE
+
+image::rhsso_realm_login_config.png[sso, 1100]
+
+  - *Themes tab:* Set All to `rh-sso`
+  - *Themes tab:* CLICK SAVE
+
+image::rhsso_realm_themes_config.png[sso, 1100]
+
+=== 4. Create Application Clients
+
 - Add Clients:
   - PetID Front End
     - Name: pet-id
