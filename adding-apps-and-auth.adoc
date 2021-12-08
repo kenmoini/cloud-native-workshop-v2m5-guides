@@ -36,19 +36,12 @@ image::rhsso_finished_kafka_cluster.png[sso, 1100]
 
 ### 2. Create Kafka Topics
 
-Next we'll return back to CRW and deploy our Kafka topics that will be relaying the messages back and forth from these different application services.
+Next we'll deploy our Kafka topics that will be relaying the messages back and forth from these different application services.
 
 [NOTE]
 ====
 Navigate back to your {{ ECLIPSE_CHE_URL }}[CodeReady Workspaces Terminal^] if you're not already in it.
 ====
-
-Make sure you're in the right Project:
-
-[source,sh,role="copypaste"]
-----
-oc project {{ USER_ID}}-sso
-----
 
 Deploy a Kafka Topic:
 
@@ -56,6 +49,8 @@ Deploy a Kafka Topic:
 ----
 oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/python-add-adoptee-usvc/openshift/kafka-topic/01-kafka-topic.yaml
 ----
+
+There is nothing shown in the Topology UI that will show the Kafka Topic outside of exploring instances of the CRD.
 
 ### 3. Deploy Database Services
 
@@ -65,13 +60,6 @@ All good applications use databases and this set is no different - we'll deploy 
 ====
 Navigate back to your {{ ECLIPSE_CHE_URL }}[CodeReady Workspaces Terminal^] if you're not already in it.
 ====
-
-Make sure you're in the right Project:
-
-[source,sh,role="copypaste"]
-----
-oc project {{ USER_ID}}-sso
-----
 
 Deploy the databases needed for our services:
 
@@ -83,15 +71,19 @@ oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-la
 
 Go back to the {{ CONSOLE_URL }}/topology/ns/{{ USER_ID }}-sso[Topology View^] and watch the databases deploy:
 
-DB_IMAGE
+image::rhsso_databases_deployed.png[sso, 1100]
 
-Navigate back to the {{ ECLIPSE_CHE_URL }}[CodeReady Workspaces Terminal^] and run the Database Migration Jobs:
+Now that the databases are deployed, navigate back to the {{ ECLIPSE_CHE_URL }}[CodeReady Workspaces Terminal^] and run the Database Migration Jobs:
 
 [source,sh,role="copypaste"]
 ----
 oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/python-process-adoptee-usvc/openshift/database-config/db-schema-migration-job.yaml && \
 oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/go-nodejs-pet-id/go-usvc/openshift/step2/db-schema-migration-job.yaml
 ----
+
+If you navigate back to the {{ CONSOLE_URL }}/topology/ns/{{ USER_ID }}-sso[Topology View^] and you can find the completed jobs that added the database schema:
+
+image::rhsso_database_jobs_deployed.png[sso, 1100]
 
 ### 4. Deploy Applications
 
