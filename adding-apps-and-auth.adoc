@@ -81,7 +81,7 @@ oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-la
 oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/go-nodejs-pet-id/go-usvc/openshift/step2/db-schema-migration-job.yaml
 ----
 
-If you navigate back to the {{ CONSOLE_URL }}/topology/ns/{{ USER_ID }}-sso[Topology View^] and you can find the completed jobs that added the database schema:
+If you navigate back to the {{ CONSOLE_URL }}/topology/ns/{{ USER_ID }}-sso[Topology View^] you can find the completed Jobs that added the database schema:
 
 image::rhsso_database_jobs_deployed.png[sso, 1100]
 
@@ -93,5 +93,120 @@ With all the dependent services deployed we can now provision our actual applica
 ====
 Navigate back to your {{ ECLIPSE_CHE_URL }}[CodeReady Workspaces Terminal^] if you're not already in it.
 ====
+
+Deploy the Furever Home Backend Python application:
+
+[source,sh,role="copypaste"]
+----
+oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/python-backend/openshift/
+----
+
+Deploy the Furever Home Add Adoptee Python service:
+
+[source,sh,role="copypaste"]
+----
+oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/python-add-adoptee-usvc/openshift/add-adoptee-usvc/01-deployment.yaml
+----
+
+Deploy the Furever Home Process Adoptee Python service:
+
+[source,sh,role="copypaste"]
+----
+oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/python-process-adoptee-usvc/openshift/process-adoptee-usvc/01-deployment.yaml
+----
+
+Deploy the Furever Home Adoption Judge Python service:
+
+[source,sh,role="copypaste"]
+----
+oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/python-adoption-judge-usvc/openshift/
+----
+
+At this point, the {{ CONSOLE_URL }}/topology/ns/{{ USER_ID }}-sso[Topology View^] of the {{ USER_ID }}-sso project should look something like this:
+
+INSERT_IMAGE_OF_TOPOLOGY
+
+Those were the easy to deploy applications where the manifests are already composed - next let's deploy the Furever Home Frontend which will need a ConfigMap to set parameters for the application to consume.
+
+First, take the RH SSO Route and access it as an environmental variable:
+
+[source,sh,role="copypaste"]
+----
+RH_SSO_ROUTE=$(oc get route sso -n {{ USER_ID}}-sso -o jsonpath='{.status.ingress[0].host}')
+APPS_ROUTE_BASE=$(oc get route sso -n {{ USER_ID}}-sso -o jsonpath='{.status.ingress[0].routerCanonicalHostname}')
+----
+
+Next, template out the ConfigMap and pipe into the `oc` CLI:
+
+[source,sh,role="copypaste"]
+----
+cat <<EOF | oc apply -n {{ USER_ID}}-sso -f -
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: furever-home-frontend-js-overrides
+  labels:
+    app: furever-home-frontend
+    app.kubernetes.io/name: furever-home-frontend
+    app.kubernetes.io/part-of: furever-home-frontend
+    component: configmap
+data:
+  overrides.js: |
+    var API_ENDPOINT = "https://furever-home-backend-{{ USER_ID}}-sso.${APPS_ROUTE_BASE}";
+    var JUDGE_ENDPOINT = "https://furever-home-adoption-judge-usvc-{{ USER_ID}}-sso.${APPS_ROUTE_BASE}";
+    var PROFILES_ENDPOINT = "https://pet-id-backend-{{ USER_ID}}-sso.${APPS_ROUTE_BASE}/app"
+    var USER_ID = 1;
+  functions.js: |
+    console.log('hello from the functions file!');
+  keycloak-shared.js: |
+    function initKeycloak() {
+      const KeycloakServer = "https://${RH_SSO_ROUTE}/auth/";
+      const KeycloakRealm = "petcorp";
+      const KeycloakClientID = "furever-home";
+      let initOptions = {
+        url: KeycloakServer, realm: KeycloakRealm, clientId: KeycloakClientID, onLoad: 'login-required'
+      }
+      var keycloak = new Keycloak(initOptions);
+      keycloak.init({ onLoad: initOptions.onLoad }).then(function(authenticated) {
+        if (authenticated) {
+          username = keycloak.idTokenParsed.preferred_username;
+          token = keycloak.token;
+          USER_ID = keycloak.subject;
+          jQuery(".text-username").text(username);
+          // Query the Profiles API for the Avatar
+          jQuery.ajax(PROFILES_ENDPOINT + '/profile?user_id=' + USER_ID, {
+            success: function (data, status, xhr) {
+              jsonO = JSON.parse(data);
+              jsonI = jsonO.entities[0].profiles[0]
+              jQuery("h1.h4 a.float-right").append('<img src="'+ jsonI.avatar_url +'" alt="Avatar" style="max-width: 60px;max-height: 60px;border-radius: 50%;margin: 0 0 0 1rem;" />');
+            }
+          });
+          loadSubmissions();
+        }
+      }).catch(function(e) {
+        console.log('failed to initialize');
+        console.log(e);
+      });
+    }
+  keycloak.json: |
+    {
+      "realm": "petcorp",
+      "auth-server-url": "https://${RH_SSO_ROUTE}/auth/",
+      "ssl-required": "none",
+      "resource": "furever-home",
+      "public-client": true,
+      "confidential-port": 0
+    }
+EOF
+----
+
+Now deploy the actual application:
+
+[source,sh,role="copypaste"]
+----
+oc apply -n {{ USER_ID}}-sso  -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/static-frontend/openshift/01-deployment.yaml && \
+oc apply -n {{ USER_ID}}-sso  -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/static-frontend/openshift/02-service.yaml && \
+oc apply -n {{ USER_ID}}-sso  -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/static-frontend/openshift/03-route.yaml
+----
 
 ### 5. Explore Applications
