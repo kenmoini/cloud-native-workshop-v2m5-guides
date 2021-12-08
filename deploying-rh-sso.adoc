@@ -91,7 +91,7 @@ In the upper left corner of the RH SSO Administration Console, hover over *Maste
 
 image::rhsso_add-realm-button.png[sso, 420]
 
-Give the Realm the name of _*petcorp*_ - then click
+Give the Realm the name of `petcorp` - then click *Create*
 
 image::rhsso_add-realm.png[sso, 1020]
 
