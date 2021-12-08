@@ -1,0 +1,14 @@
+config:
+    renderer: asciidoc
+
+modules:
+  workshop-environment:
+    name: Your Workshop Environment
+  getting-started-rh-sso:
+    name: Getting Started with Red Hat Single Sign-On
+  deploying-rh-sso:
+    name: Deploying Red Hat Single Sign-On
+  adding-apps-and-auth:
+    name: Adding Applications and Authentication
+  additional-modifications:
+    name: Additional Modifications

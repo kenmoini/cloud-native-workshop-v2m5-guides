@@ -1,0 +1,131 @@
+= Single Sign-On and Identity
+:experimental:
+:imagesdir: images
+
+In this module, you will learn how to deploy Red Hat Single Sign-On, configure a Realm, Clients, Roles, and Users - then deploy a few applications, perform customizations, enhance security, and more.
+
+As you build new and migrate legacy applications technologies such as containers and orchestration platforms like OpenShift solve the deployment of our distributed applications quite well, but some challenges remain with distributed apps:
+
+* Microservice-to-microservice authentication and authorization
+* Identity integration across polyglot application runtimes
+* Scalability of an identity platform
+* Access from different devices
+* Integration of developer resources
+* Brokering with an API Gateway
+
+Today, developers are responsible for taking into account things like:
+
+* User database schema
+* Identity provider integration maintenance
+* Implementing security best pratices
+
+These concerns are compounded with each runtime and language as they can be addressed with different client libraries and frameworks - in some cases there may be no implementation of a particular client library for your chosen language or runtime and operating on the OpenID Connect or SAML layer would be needed.
+
+In this section we'll explore how to use *Red Hat Single Sign-on*, along side a set of complimentary technologies such as *Red Hat AMQ Streams*.
+
+=== What is Red Hat Single Sign-On?
+
+image::rh-sso-logo.png[Logo, 600, align="center"]
+
+Red Hat Single Sign-On is based on https://www.keycloak.org/[Keycloak^] and enables you to secure your web applications by providing Web single sign-on (SSO) capabilities based on popular standards such as *SAML 2.0, OpenID Connect and OAuth 2.0*.  You can add authentication to applications and secure services with minimum fuss - there are client libraries for Java EE, MicroProfile, Spring, Node.js, C#, and more.
+
+No need to deal with storing users or authenticating users on a per-application basis while leveraging advanced functions such as User Federation, Identity Brokering and Social Login.
+
+The distributed version of Red Hat Single Sign-On is built in a secure & controlled environment, tested & certified with selected sets of databases, LDAP servers, JDKs, OSes, and so on for a flexible supported identity solution.
+
+Long term maintenance is offered with Red Hat Single Sign-On, as well as regular scheduled patches, timely security patches, and supported traditional or OpenShift deployment options.
+
+References:
+
+* https://en.wikipedia.org/wiki/JSON_Web_Token[JSON Web Token(JWT)^]
+* https://en.wikipedia.org/wiki/OAuth[OAuth^]
+* https://en.wikipedia.org/wiki/OpenID[OpenID^]
+* https://en.wikipedia.org/wiki/Security_Assertion_Markup_Language[Security Assertion Markup Language(SAML)^]
+* https://access.redhat.com/products/red-hat-single-sign-on[Red Hat Single Sign-On^]
+* https://www.redhat.com/en/products/application-runtimes[Red Hat Runtimes^]
+
+=== Getting Ready for the labs
+
+If you've already worked on prior labs today, you'll be familiar with the CodeReady Workspaces environment and can skip down to the *Import Project* section below.
+
+You will be using Red Hat CodeReady Workspaces, an online IDE based on https://www.eclipse.org/che/[Eclipe Che^]. *Changes to files are auto-saved every few seconds*, so you don’t need to explicitly save changes.
+
+To get started, {{ ECLIPSE_CHE_URL }}[access the CodeReady Workspaces instance^] and log in using the username and password you’ve been assigned (e.g. `{{ USER_ID }}/{{ CHE_USER_PASSWORD }}`):
+
+image::che-login.png[cdw, 700]
+
+Once you log in, you’ll be placed on your personal dashboard. Click on the name of
+the pre-created workspace on the left, as shown below (the name will be different depending on your assigned number).
+
+image::crw-landing.png[cdw, 700]
+
+You can also click on the name of the workspace in the center, and then click on the green {{ USER_ID}}-namespace that says _Open_ on the top right hand side of the screen:
+
+image::crw-landing-start.png[cdw, 700]
+
+After a minute or two, you’ll be placed in the workspace:
+
+image::che-workspace.png[cdw, 900]
+
+This IDE is based on Eclipse Che (which is in turn based on MicroSoft VS Code editor).
+
+You can see icons on the left for navigating between project explorer, search, version control (e.g. Git), debugging, and other plugins.  You’ll use these during the course of this workshop. Feel free to click on them and see what they do:
+
+image::crw-icons.png[cdw, 400, align="center"]
+
+[NOTE]
+====
+If things get weird or your browser appears, you can simply reload the browser tab to refresh the view.
+====
+
+Many features of CodeReady Workspaces are accessed via *Commands*. You can see a few of the commands listed with links on the home page (e.g. _New File.._, _Git Clone.._, and others).
+
+If you ever need to run commands that you don't see in a menu, you can press kbd:[F1] to open the command window, or the more traditional kbd:[Control+SHIFT+P] (or kbd:[Command+SHIFT+P] on Mac OS X).
+
+==== Import project
+
+Let's import our first project. Click on **Git Clone..** (or type kbd:[F1], enter 'git' and click on the auto-completed _Git Clone.._ )
+
+image::che-workspace-gitclone.png[cdw, 600, align="center"]
+
+Step through the prompts, using the following value for **Repository URL**. If you use *FireFox*, it may end up pasting extra spaces at the end, so just press backspace after pasting:
+
+[source, shell, role="copypaste"]
+----
+
+https://github.com/kenmoini/cloud-native-workshop-v2m5-labs.git
+
+----
+
+image::crw-clone-repo.png[crw, 600, align="center"]
+
+Click on *Select Repository Location* then click on *Open in New Window*. It will open a new web browser immediately:
+
+image::crw-add-workspace.png[crw, 900]
+
+The project is imported into your workspace and is visible in the project explorer after clicking the *Explorer* pane at the upper right:
+
+image::crw-clone-explorer.png[crw, 600, align="center"]
+
+==== IMPORTANT: Check out proper Git branch
+
+To make sure you're using the right version of the project files, run this command in a CodeReady Terminal:
+
+[source,sh,role="copypaste"]
+----
+cd $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs && git checkout ocp-4.8
+----
+
+[NOTE]
+====
+The Terminal window in CodeReady Workspaces. You can open a terminal window for any of the containers running in your Developer workspace. For the rest of these labs, anytime you need to run a command in a terminal, you can use the **>_ New Terminal** command on the right:
+
+image::codeready-workspace-terminal.png[codeready-workspace-terminal, 700]
+====
+
+=== Remove other projects
+
+If you've completed other modules today (such as `cloud-native-workshop-v2m1-labs`), remove them from your workspace by right-clicking on the project name in the explorer and choose *Delete* and accept the warning. Be sure not to delete the new project you just imported for this lab!
+
+image::remove-workspace.png[remove, 700]
+
