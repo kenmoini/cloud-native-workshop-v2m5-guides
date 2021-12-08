@@ -25,7 +25,7 @@ In this section we'll explore how to use *Red Hat Single Sign-on*, along side a 
 
 === What is Red Hat Single Sign-On?
 
-image::rh-sso-logo.png[Logo, 600, align="center"]
+image::rh-sso-logo.png[Logo, 390, align="center"]
 
 Red Hat Single Sign-On is based on https://www.keycloak.org/[Keycloak^] and enables you to secure your web applications by providing Web single sign-on (SSO) capabilities based on popular standards such as *SAML 2.0, OpenID Connect and OAuth 2.0*.  You can add authentication to applications and secure services with minimum fuss - there are client libraries for Java EE, MicroProfile, Spring, Node.js, C#, and more.
 

@@ -21,15 +21,9 @@ _Red Hat Single Sign-On (RH-SSO)_ is based on the *Keycloak* project and enables
 * *Identity Brokering* - Integrates with 3rd-party Identity Providers including leading social networks as identity source.
 * *REST APIs and Administration GUI* - Specify user federation, role mapping, and client applications with easy-to-use Administration GUI and REST APIs.
 
-We will deploy RH-SSO in a new project. Go to the {{ CONSOLE_URL }}/topology/ns/{{ USER_ID }}-catalog[Topology View^], click on *Create Project*:
+We will deploy RH-SSO in a new project. Go to the {{ CONSOLE_URL }}/topology/ns/{{ USER_ID }}-sso[Topology View^] of the {{ USER_ID }}-sso project:
 
-image::create_project_topology.png[rhsso, 500]
-
-Type the following name then click on *Create*:
-
- * Name: `{{ USER_ID}}-sso`
-
-image::create_project_popup.png[rhsso, 500]
+image::select_project_topology.png[rhsso, 500]
 
 Click on *From Catalog* in Topology view:
 
