@@ -132,9 +132,9 @@ image::rhsso_create_client_pet-id.png[sso, 1100]
 
 Configure the Client Settings with the following:
 
-- *Login Theme*: rh-sso
-- *Valid Redirect URIs*: *
-- *Web Origins*: *
+- *Login Theme*: `rh-sso`
+- *Valid Redirect URIs*: `*`
+- *Web Origins*: `*`
 
 image::rhsso_client_config_pet-id.png[sso, 1100]
 
@@ -150,9 +150,9 @@ image::rhsso_create_client_furever-home.png[sso, 1100]
 
 Configure the Client Settings with the following:
 
-- *Login Theme*: rh-sso
-- *Valid Redirect URIs*: *
-- *Web Origins*: *
+- *Login Theme*: `rh-sso`
+- *Valid Redirect URIs*: `*`
+- *Web Origins*: `*`
 
 image::rhsso_client_config_furever-home.png[sso, 1100]
 
@@ -166,12 +166,35 @@ image::rhsso_add_user_button.png[sso, 1100]
 
 For this exercise we'll create two users - `luser` and `sadmin`
 
+Create a user with the following information:
+
+- *Username*: `luser`
+- *Email*: `luser@example.com`
+- *First Name*: `Luser`
+- *Last Name*: `Smith`
+- *User Enabled*: On
+- *Email Verified*: On
+- *Click Save*
+
 image::rhsso_add_user_luser.png[sso, 1100]
+
+With the user created, click the *Credentials* tab and set the password for the user to - set it to something like `password`.  Make sure to set *Temporary* to Off!
+
+image::rhsso_set_user_password_luser.png[sso, 1100]
+
+Create another user with the following information:
+
+- *Username*: `sadmin`
+- *Email*: `sadmin@example.com`
+- *First Name*: `Sadmin`
+- *Last Name*: `Jones`
+- *User Enabled*: On
+- *Email Verified*: On
+- *Click Save*
 
 image::rhsso_add_user_sadmin.png[sso, 1100]
 
+With the user created, click the *Credentials* tab and set the password for the user to - set it to something like `password`.  Make sure to set *Temporary* to Off!
 
-
-  - Credentials tab, Set password, toggle to not Temporary
-  
-  
+image::rhsso_set_user_password_sadmin.png[sso, 1100]
+ 
