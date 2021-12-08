@@ -1,3 +1,105 @@
 = Adding Applications and Authentication
 :experimental:
 :imagesdir: images
+
+In this lab we'll deploy the applications that will consume Red Hat Single Sign-On for authentication.  The applications being deployed are:
+
+- *Furever Home*: A Python and Static HTML Generator stack that provides Pet Adoption from a pool of available pets.  A microservice submits a new pet to a Kafka Topic which is then consumed by another service that inserts it into a database which is queried by a backend API service that feeds the frontend.  Once a user submits to adopt a pet there's another service that does a coin flip on if their adoption request is approved or not.
+- *Pet ID*: A Golang and NodeJS (Vue) application stack that enhances the user's profile.
+
+### 1. Deploy AMQ Streams
+
+Before deploying the applications we need a Kafka cluster deployed - thankfully this is easy with https://www.redhat.com/en/technologies/jboss-middleware/amq[Red Hat AMQ Streams^].
+
+[NOTE]
+====
+Navigate back to your {{ ECLIPSE_CHE_URL }}[CodeReady Workspaces Terminal^] if you're not already in it.
+====
+
+Make sure you're in the right Project:
+
+[source,sh,role="copypaste"]
+----
+oc project {{ USER_ID}}-sso
+----
+
+Deploy a Kafka Cluster with the AMQ Streams Operator:
+
+[source,sh,role="copypaste"]
+----
+oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/python-add-adoptee-usvc/openshift/kafka-instance/01-kafka-cluster.yaml
+----
+
+Go back to the {{ CONSOLE_URL }}/topology/ns/{{ USER_ID }}-sso[Topology View^] and watch the Kafka cluster deploy automatically:
+
+image::rhsso_finished_kafka_cluster.png[sso, 1100]
+
+### 2. Create Kafka Topics
+
+Next we'll return back to CRW and deploy our Kafka topics that will be relaying the messages back and forth from these different application services.
+
+[NOTE]
+====
+Navigate back to your {{ ECLIPSE_CHE_URL }}[CodeReady Workspaces Terminal^] if you're not already in it.
+====
+
+Make sure you're in the right Project:
+
+[source,sh,role="copypaste"]
+----
+oc project {{ USER_ID}}-sso
+----
+
+Deploy a Kafka Topic:
+
+[source,sh,role="copypaste"]
+----
+oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/python-add-adoptee-usvc/openshift/kafka-topic/01-kafka-topic.yaml
+----
+
+### 3. Deploy Database Services
+
+All good applications use databases and this set is no different - we'll deploy a few databases simply on OpenShift.
+
+[NOTE]
+====
+Navigate back to your {{ ECLIPSE_CHE_URL }}[CodeReady Workspaces Terminal^] if you're not already in it.
+====
+
+Make sure you're in the right Project:
+
+[source,sh,role="copypaste"]
+----
+oc project {{ USER_ID}}-sso
+----
+
+Deploy the databases needed for our services:
+
+[source,sh,role="copypaste"]
+----
+oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/python-process-adoptee-usvc/openshift/database/01-template-instance.yaml && \
+oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/go-nodejs-pet-id/go-usvc/openshift/step1/00-db-template-instance.yaml
+----
+
+Go back to the {{ CONSOLE_URL }}/topology/ns/{{ USER_ID }}-sso[Topology View^] and watch the databases deploy:
+
+DB_IMAGE
+
+Navigate back to the {{ ECLIPSE_CHE_URL }}[CodeReady Workspaces Terminal^] and run the Database Migration Jobs:
+
+[source,sh,role="copypaste"]
+----
+oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/python-process-adoptee-usvc/openshift/database-config/db-schema-migration-job.yaml && \
+oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/go-nodejs-pet-id/go-usvc/openshift/step2/db-schema-migration-job.yaml
+----
+
+### 4. Deploy Applications
+
+With all the dependent services deployed we can now provision our actual applications.
+
+[NOTE]
+====
+Navigate back to your {{ ECLIPSE_CHE_URL }}[CodeReady Workspaces Terminal^] if you're not already in it.
+====
+
+### 5. Explore Applications

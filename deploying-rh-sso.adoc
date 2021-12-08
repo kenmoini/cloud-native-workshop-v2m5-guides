@@ -38,7 +38,7 @@ image::catalog_rhsso.png[rhsso, 700]
 Leave the default template variables - scroll to the bottom and click *Create*
 ====
 
-Add the following labels in CodeReady Workspaces Terminal:
+Add the following labels in {{ ECLIPSE_CHE_URL }}[the CodeReady Workspaces Terminal^]:
 
 [source,sh,role="copypaste"]
 ----
