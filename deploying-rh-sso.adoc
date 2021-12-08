@@ -122,15 +122,15 @@ We will add two Clients to this Petcorp Realm.
 
 ==== PetID Client
 
-1. In the left-hand pane, navigate to *Clients* and then click *Create* to the right
+In the left-hand pane, navigate to *Clients* and then click *Create* to the right
 
 image::rhsso_create_client_button.png[sso, 1100]
 
-2. Give it a Client ID of `pet-id` - click *Save*
+Give it a Client ID of `pet-id` - click *Save*
 
 image::rhsso_create_client_pet-id.png[sso, 1100]
 
-3. Configure the Client Settings with the following:
+Configure the Client Settings with the following:
 
 - *Login Theme*: rh-sso
 - *Valid Redirect URIs*: *
@@ -140,15 +140,15 @@ image::rhsso_client_config_pet-id.png[sso, 1100]
 
 ==== Furever Home Client
 
-> In the left-hand pane, navigate to *Clients* and then click *Create* to the right
+In the left-hand pane, navigate to *Clients* and then click *Create* to the right
 
 image::rhsso_create_client_button.png[sso, 1100]
 
-> Give it a Client ID of `furever-home` - click *Save*
+Give it a Client ID of `furever-home` - click *Save*
 
 image::rhsso_create_client_furever-home.png[sso, 1100]
 
-> Configure the Client Settings with the following:
+Configure the Client Settings with the following:
 
 - *Login Theme*: rh-sso
 - *Valid Redirect URIs*: *
@@ -159,7 +159,19 @@ image::rhsso_client_config_furever-home.png[sso, 1100]
 === 5. Create Users
 
 We are logged into the RH SSO Administrative Console but this user is not part of this Realm - in fact, this Realm has no users so before we can use our secured applications we need a user or two.
-    
-- Create Users - The userNN is the admin, there needs to be Realm users
-  - Create user, give username, email @example.com, First/Last, both verified
+
+In the left-hand pane, navigate to *Clients* and then click *Create* to the right
+
+image::rhsso_add_user_button.png[sso, 1100]
+
+For this exercise we'll create two users - `luser` and `sadmin`
+
+image::rhsso_add_user_luser.png[sso, 1100]
+
+image::rhsso_add_user_sadmin.png[sso, 1100]
+
+
+
   - Credentials tab, Set password, toggle to not Temporary
+  
+  
