@@ -94,5 +94,16 @@ Now the application is looking to see if the User has the `responsible` Role.  L
 [NOTE]
 ====
 Access the https://secure-sso-{{ USER_ID}}-sso.{{ ROUTE_SUBDOMAIN}}[Red Hat SSO Administrative Console^]
+
+If you need to obtain the Administrative Username and Password just run the following:
 ====
+
+[source,sh,role="copypaste"]
+----
+SSO_ADMIN_USER=$(oc get dc sso -n {{ USER_ID}}-sso -o jsonpath='{.spec.template.spec.containers[0].env}' | jq -r '.[] | select(.name | test("SSO_ADMIN_USERNAME")).value')
+SSO_ADMIN_PASS=$(oc get dc sso -n {{ USER_ID}}-sso -o jsonpath='{.spec.template.spec.containers[0].env}' | jq -r '.[] | select(.name | test("SSO_ADMIN_PASSWORD")).value')
+
+echo -e "\nAdmin User: ${SSO_ADMIN_USER}\nAdmin Pass: ${SSO_ADMIN_PASS}\n"
+
+----
 
