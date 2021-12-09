@@ -107,3 +107,38 @@ echo -e "\nAdmin User: ${SSO_ADMIN_USER}\nAdmin Pass: ${SSO_ADMIN_PASS}\n"
 
 ----
 
+* Navigate in the left-hand pane to Roles.
+* Click the *Add Role* button
+
+image::rhsso_add_role.png[rhsso, 960]
+
+image::catalog_rhsso.png[rhsso, 960]
+
+* Add a Role with the name `responsible`
+
+image::rhsso_add_responsible_role.png[rhsso, 960]
+
+With the Role now created we can associate it with one of our users - assuming that the user `sadmin` is responsible enough, the system provides him the `responsible` Role!
+
+* Navigate in the left-hand pane to Users.
+* Click the *View All Users* button
+
+image::rhsso_view_all_users.png[rhsso, 960]
+
+* Select the *sadmin* user
+* Click on the *Role Mappings* tab
+* Select the `responsible` Role from the *Available Roles*
+* Click the *Add selected >* button
+
+image::rhsso_give_sadmin_responsible_role.png[rhsso, 960]
+
+[NOTE]
+====
+Now you can log in as either user to see how the Role check allows or disallows pet adoption!
+====
+
+=== 2. Adding Login Themes
+
+One of the first things that is often changed is the theme!  If you are running RH SSO via a traditionally deployed JVM you simply add it to the file system - with a container you can bake custom images that include the assets, attach additional themes with ConfigMaps with assets in an S3 store, etc.
+
+In this exercise we'll deploy a custom baked image with a Pet-tastic theme!
