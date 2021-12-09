@@ -93,8 +93,13 @@ Now the application is looking to see if the User has the `responsible` Role.  L
 
 [NOTE]
 ====
+It can take a minute or two for the updated ConfigMap to sync with the running container.
+====
+
 Access the https://secure-sso-{{ USER_ID}}-sso.{{ ROUTE_SUBDOMAIN}}[Red Hat SSO Administrative Console^]
 
+[NOTE]
+====
 If you need to obtain the Administrative Username and Password just run the following:
 ====
 
@@ -161,7 +166,7 @@ Then remove the old ImageStream trigger:
 oc set triggers dc/sso --from-image=openshift/sso74-openshift-rhel8:7.4 --remove -n {{ USER_ID }}-sso
 ----
 
-The RH SSO Server will redeploy with the new themed container image.
+The RH SSO Server will redeploy with the new themed container image - it may take a minute or two to do so.
 
 [NOTE]
 ====
