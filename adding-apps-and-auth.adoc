@@ -341,6 +341,30 @@ oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-la
 
 You can watch the build in the {{ CONSOLE_URL }}/topology/ns/{{ USER_ID }}-sso[Topology View^] of the {{ USER_ID }}-sso project:
 
-INSERT BUILD IMAGE HERE
+image::rhsso_pet-id-frontend-building.png[sso, 1190]
 
 ### 5. Explore Applications
+
+All of the applications are now deployed!
+
+Let us explore an unauthenticated page, the https://furever-home-frontend-{{ USER_ID}}-sso.{{ ROUTE_SUBDOMAIN}}[Furever Home frontend^]
+
+image::rhsso_open_furever-home-frontend-route.png[sso, 1190]
+
+You can access the home page unauthenticated and this logic is built into the application itself.
+
+image::rhsso_unauth_furever_home.png[sso, 1190]
+
+If you click on either link which require an authenticated user then the authentication flow will force a redirection to the RH SSO service:
+
+image::rhsso_user_login_screen.png[sso, 1190]
+
+Now let us explore the https://pet-id-frontend-{{ USER_ID}}-sso.{{ ROUTE_SUBDOMAIN}}[PetID frontend^]
+
+image::rhsso_open_petid-frontend-route.png[sso, 1190]
+
+*PetID* is an identity enrichment service and requires an authenticated user as well.
+
+It can pull information from the built in user store in RH SSO or a scope from another IdP via RH SSO but it's often most flexible to create an Identity Encrichment/Metadata service, especially if multiple 3rd party Identity Providers are used.
+
+The PetID service will prompt you for some information about yourself - feel free to use this Avatar URL: `https://access.redhat.com/webassets/avalon/g/shadowman-200.png`
