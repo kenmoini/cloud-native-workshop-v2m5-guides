@@ -129,3 +129,53 @@ If you've completed other modules today (such as `cloud-native-workshop-v2m1-lab
 
 image::remove-workspace.png[remove, 700]
 
+=== Logging In
+
+First, open a new browser with the link:{{ CONSOLE_URL }}[OpenShift web console^]
+
+image::openshift_login.png[openshift_login, 700]
+
+Login using:
+
+* Username: `{{ USER_ID }}`
+* Password: `{{ OPENSHIFT_USER_PASSWORD }}`
+
+You will see a list of projects to which you have access:
+
+image::openshift_landing.png[openshift_landing, 700]
+
+The project displayed on the landing page depends on which labs you will run today.
+
+Although your CodeReady workspace is running on the Kubernetes cluster, it’s running with a default restricted _Service Account_ that prevents you from creating most resource types. If you’ve completed other modules, you’re probably already logged in, but let’s login again: click on *Login to OpenShift*:
+
+[NOTE]
+====
+When you click on this, CodeReady Workspaces executes the following command:
+*oc login https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT --insecure-skip-tls-verify=true --username={{ USER_ID }} --password={{ OPENSHIFT_USER_PASSWORD }}*
+====
+
+image::cmd-login.png[login,700]
+
+You should see something like this (the project names may be different):
+
+[source,none]
+----
+Login successful.
+
+You have access to the following projects and can switch between them with 'oc project <projectname>':
+
+  * {{ USER_ID }}-bookinfo
+    {{ USER_ID }}-catalog
+    {{ USER_ID }}-cloudnative-pipeline
+    {{ USER_ID }}-cloudnativeapps
+    {{ USER_ID }}-inventory
+    {{ USER_ID }}-istio-system
+
+Using project "{{ USER_ID }}-bookinfo".
+Welcome! See 'oc help' to get started.
+----
+
+[NOTE]
+====
+After you log in using *Login to OpenShift*, the terminal is no longer usable as a regular terminal. You can close the terminal window. You will still be logged in when you open more terminals later!
+====
