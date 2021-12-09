@@ -104,7 +104,6 @@ SSO_ADMIN_USER=$(oc get dc sso -n {{ USER_ID}}-sso -o jsonpath='{.spec.template.
 SSO_ADMIN_PASS=$(oc get dc sso -n {{ USER_ID}}-sso -o jsonpath='{.spec.template.spec.containers[0].env}' | jq -r '.[] | select(.name | test("SSO_ADMIN_PASSWORD")).value')
 
 echo -e "\nAdmin User: ${SSO_ADMIN_USER}\nAdmin Pass: ${SSO_ADMIN_PASS}\n"
-
 ----
 
 * Navigate in the left-hand pane to Roles.
@@ -143,3 +142,75 @@ One of the first things that is often changed is the theme!  If you are running 
 
 In this exercise we'll deploy a custom baked image with a Pet-tastic theme!
 
+[NOTE]
+====
+Navigate back to your {{ ECLIPSE_CHE_URL }}[CodeReady Workspaces Terminal^] if you're not already in it.
+====
+
+First provide the DeploymentConfig a new ImageStream to pull from:
+
+[source,sh,role="copypaste"]
+----
+oc set triggers dc/sso --from-image=openshift/sso74-openshift-rhel8:7.4-themed -c sso -n {{ USER_ID }}-sso
+----
+
+Then remove the old ImageStream trigger:
+
+[source,sh,role="copypaste"]
+----
+oc set triggers dc/sso --from-image=openshift/sso74-openshift-rhel8:7.4 --remove -n {{ USER_ID }}-sso
+----
+
+The RH SSO Server will redeploy with the new themed container image.
+
+[NOTE]
+====
+Access the https://secure-sso-{{ USER_ID}}-sso.{{ ROUTE_SUBDOMAIN}}[Red Hat SSO Administrative Console^]
+
+You will need to reauthenticate - if you need to obtain the Administrative Username and Password just run the following:
+====
+
+[source,sh,role="copypaste"]
+----
+SSO_ADMIN_USER=$(oc get dc sso -n {{ USER_ID}}-sso -o jsonpath='{.spec.template.spec.containers[0].env}' | jq -r '.[] | select(.name | test("SSO_ADMIN_USERNAME")).value')
+SSO_ADMIN_PASS=$(oc get dc sso -n {{ USER_ID}}-sso -o jsonpath='{.spec.template.spec.containers[0].env}' | jq -r '.[] | select(.name | test("SSO_ADMIN_PASSWORD")).value')
+
+echo -e "\nAdmin User: ${SSO_ADMIN_USER}\nAdmin Pass: ${SSO_ADMIN_PASS}\n"
+----
+
+Next we'll change the Realm Themes:
+
+* In the left-hand pane click *Realm Settings*
+* Navigate to the *Themes* tab
+* Change all the themes to `my-purrina`
+* Click *Save*
+
+image::rhsso_change_realm_themes.png[rhsso, 1100]
+
+With the Realm Themes changed we can now change the Client Theme.
+
+* In the left-hand pane, click *Clients*
+* Click *Edit* next to the `pet-id` Client
+* Change the *Login Theme* to `my-purrina`
+* Click *Save*
+
+image::rhsso_change_client_theme.png[rhsso, 1100]
+
+[NOTE]
+====
+Repeat these steps for the `furever-home` Client
+====
+
+When reauthenticating as a user you should now see a different log in screen:
+
+image::rhsso_custom_theme_login_screen.png[rhsso, 1100]
+
+=== Congratulations!
+
+You have now successfully begun to work with single sign-on technologies.  As a technology there are a vast array of controls and functions that are extended through the RH SSO platform and this is only the beginning - many of the deployments in this workshop are far from ideally secure and are meant just for simple demonstration purposes.
+
+=== Summary
+
+In this lab you learned a bit more about RH SSO and some of the supporting technologies and functions with OpenShift.
+
+You deployed RH SSO, configured it with a basic Realm and components, deployed a few applications with a number of methods, and added additional customizations to the integrations.
