@@ -93,5 +93,6 @@ Now the application is looking to see if the User has the `responsible` Role.  L
 
 [NOTE]
 ====
- Access the https://secure-sso-{{ USER_ID}}-sso.{{ ROUTE_SUBDOMAIN}}[Red Hat SSO Administrative Console^]
+Access the https://secure-sso-{{ USER_ID}}-sso.{{ ROUTE_SUBDOMAIN}}[Red Hat SSO Administrative Console^]
 ====
+
