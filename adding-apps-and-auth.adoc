@@ -331,6 +331,14 @@ Next we'll start a new Build of that Application:
 oc start-build pet-id-frontend -n {{ USER_ID}}-sso --from-dir="$CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/go-nodejs-pet-id/app-vue/"
 ----
 
+Finally, add the Service and Route to the Application Deployment:
+
+[source,sh,role="copypaste"]
+----
+oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/go-nodejs-pet-id/app-vue/openshift/02-service.yaml && \
+oc apply -n {{ USER_ID}}-sso -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/go-nodejs-pet-id/app-vue/openshift/03-route.yaml
+----
+
 You can watch the build in the {{ CONSOLE_URL }}/topology/ns/{{ USER_ID }}-sso[Topology View^] of the {{ USER_ID }}-sso project:
 
 INSERT BUILD IMAGE HERE
