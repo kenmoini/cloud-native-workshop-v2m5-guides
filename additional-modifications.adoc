@@ -1,3 +1,97 @@
 = Additional Modifications
 :experimental:
 :imagesdir: images
+
+=== 1. Adding a Role Check
+
+There are numerous ways to handle authorization at different layers of your authenticated applications - one function available is to check *Roles*.
+
+Roles identify a type or category of user. Admin, user, manager, and employee are all typical roles that may exist in an organization. Applications often assign access and permissions to specific roles rather than individual users as dealing with users can be too fine grained and hard to manage.
+
+In this exercise we'll turn on a Role check in the Furever Home pet adoption service - this will ensure only responsible users are allowed to adopt a pet.
+
+[NOTE]
+====
+Navigate back to your {{ ECLIPSE_CHE_URL }}[CodeReady Workspaces Terminal^] if you're not already in it.
+====
+
+First, we'll change the ConfigMap associated with the Furever Home frontend service - this will turn on the Role check.
+
+Apply a reconfigured ConfigMap in the CodeReady Workspaces Terminal.  To find the edits made look for the two lines after `EDITS MADE HERE!`:
+
+[source,sh,role="copypaste"]
+----
+cat <<EOF | oc apply -n {{ USER_ID}}-sso -f -
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: furever-home-frontend-js-overrides
+  labels:
+    app: furever-home-frontend
+    app.kubernetes.io/name: furever-home-frontend
+    app.kubernetes.io/part-of: furever-home-frontend
+    component: configmap
+data:
+  overrides.js: |
+    var API_ENDPOINT = "https://furever-home-backend-{{ USER_ID}}-sso.${APPS_ROUTE_BASE}";
+    var JUDGE_ENDPOINT = "https://furever-home-adoption-judge-usvc-{{ USER_ID}}-sso.${APPS_ROUTE_BASE}";
+    var PROFILES_ENDPOINT = "https://pet-id-backend-{{ USER_ID}}-sso.${APPS_ROUTE_BASE}/app"
+    var USER_ID = 1;
+  functions.js: |
+    console.log('hello from the functions file!');
+  keycloak-shared.js: |
+    function initKeycloak() {
+      const KeycloakServer = "https://${RH_SSO_ROUTE}/auth/";
+      const KeycloakRealm = "petcorp";
+      const KeycloakClientID = "furever-home";
+      let initOptions = {
+        url: KeycloakServer, realm: KeycloakRealm, clientId: KeycloakClientID, onLoad: 'login-required'
+      }
+      var keycloak = new Keycloak(initOptions);
+      keycloak.init({ onLoad: initOptions.onLoad }).then(function(authenticated) {
+        if (authenticated) {
+          username = keycloak.idTokenParsed.preferred_username;
+          token = keycloak.token;
+          USER_ID = keycloak.subject;
+          realmRoles = keycloak.realmAccess;
+
+          if (!realmRoles.roles.includes("responsible")) {
+            // EDITS MADE HERE - the following two lines were uncommented!
+            alert("You are not responsible enough to adopt a pet!");
+            keycloak.logout();
+          }
+
+          jQuery(".text-username").text(username);
+          // Query the Profiles API for the Avatar
+          jQuery.ajax(PROFILES_ENDPOINT + '/profile?user_id=' + USER_ID, {
+            success: function (data, status, xhr) {
+              jsonO = JSON.parse(data);
+              jsonI = jsonO.entities[0].profiles[0]
+              jQuery("h1.h4 a.float-right").append('<img src="'+ jsonI.avatar_url +'" alt="Avatar" style="max-width: 60px;max-height: 60px;border-radius: 50%;margin: 0 0 0 1rem;" />');
+            }
+          });
+          loadSubmissions();
+        }
+      }).catch(function(e) {
+        console.log('failed to initialize');
+        console.log(e);
+      });
+    }
+  keycloak.json: |
+    {
+      "realm": "petcorp",
+      "auth-server-url": "https://${RH_SSO_ROUTE}/auth/",
+      "ssl-required": "none",
+      "resource": "furever-home",
+      "public-client": true,
+      "confidential-port": 0
+    }
+EOF
+----
+
+Now the application is looking to see if the User has the `responsible` Role.  Let's add that Role to the Realm and associate a User with the Role to allow them to adopt a pet.
+
+[NOTE]
+====
+ Access the https://secure-sso-{{ USER_ID}}-sso.{{ ROUTE_SUBDOMAIN}}[Red Hat SSO Administrative Console^]
+====
