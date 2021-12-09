@@ -172,6 +172,13 @@ data:
           username = keycloak.idTokenParsed.preferred_username;
           token = keycloak.token;
           USER_ID = keycloak.subject;
+          realmRoles = keycloak.realmAccess;
+
+          if (!realmRoles.roles.includes("responsible")) {
+            //alert("You are not responsible enough to adopt a pet!");
+            //keycloak.logout();
+          }
+
           jQuery(".text-username").text(username);
           // Query the Profiles API for the Avatar
           jQuery.ajax(PROFILES_ENDPOINT + '/profile?user_id=' + USER_ID, {
@@ -368,3 +375,5 @@ image::rhsso_open_petid-frontend-route.png[sso, 1190]
 It can pull information from the built in user store in RH SSO or a scope from another IdP via RH SSO but it's often most flexible to create an Identity Encrichment/Metadata service, especially if multiple 3rd party Identity Providers are used.
 
 The PetID service will prompt you for some information about yourself - feel free to use this Avatar URL: `https://access.redhat.com/webassets/avalon/g/shadowman-200.png`
+
+image::rhsso_pet_id_authed_user.png[sso, 1190]
