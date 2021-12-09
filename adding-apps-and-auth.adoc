@@ -209,6 +209,10 @@ oc apply -n {{ USER_ID}}-sso  -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-l
 oc apply -n {{ USER_ID}}-sso  -f $CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/python-staticjs-furever-home/static-frontend/openshift/03-route.yaml
 ----
 
+The {{ CONSOLE_URL }}/topology/ns/{{ USER_ID }}-sso[Topology View^] of the {{ USER_ID }}-sso project should look something like this:
+
+image::rhsso_fh_fe_app_topology.png[sso, 885]
+
 There are two more applications that need to be deployed - next is the *PetID Backend* which has a templated Deployment.
 
 First, apply the supporting PetID Backend manifests:
@@ -279,6 +283,56 @@ spec:
 EOF
 ----
 
+With the PetID Backend deployed the {{ CONSOLE_URL }}/topology/ns/{{ USER_ID }}-sso[Topology View^] of the {{ USER_ID }}-sso project should look something like this:
 
+image::rhsso_pid_be_app_topology.png[sso, 885]
+
+Our final application is the *PetID Frontend* - this application takes some minor modifications to deploy and it will be built live on OpenShift!
+
+Before deploying, we need to modify a file quickly and to do so we need a few variables:
+
+[source,sh,role="copypaste"]
+----
+RH_SSO_ROUTE=$(oc get route secure-sso -n {{ USER_ID}}-sso -o jsonpath='{.status.ingress[0].host}')
+PET_ID_ROUTE=$(oc get route pet-id-backend -n {{ USER_ID}}-sso -o jsonpath='{.status.ingress[0].host}')
+
+echo -e "\nRH_SSO_ROUTE: ${RH_SSO_ROUTE}\nPET_ID_BACKEND_ROUTE: ${PET_ID_ROUTE}\n"
+----
+
+[NOTE]
+====
+You will need those URLs to modify the needed JavaScript file
+====
+
+Next, in your {{ ECLIPSE_CHE_URL }}[CodeReady Workspaces Editor^] open the file `services/go-nodejs-pet-id/app-vue/src/vars.js`
+
+You will see two parts where you should edit - substitute the corresponding URLs from the terminal into the file in its respective places at `RH_SSO_ROUTE` and `PET_ID_BACKEND_ROUTE`
+
+image::rhsso_app_vars_edit.png[sso, 1190]
+
+[NOTE]
+====
+There is no need to save the file - it is automatically saved
+====
+
+Now with our application configured, we can deploy to OpenShift from the source code we have locally in CodeReady Workspaces.
+
+Define a new Application that will use the Docker build strategy and take binary input for the source:
+
+[source,sh,role="copypaste"]
+----
+oc new-app -n {{ USER_ID}}-sso --strategy=docker --name pet-id-frontend --binary
+----
+
+Next we'll start a new Build of that Application:
+
+[source,sh,role="copypaste"]
+----
+oc start-build pet-id-frontend -n {{ USER_ID}}-sso --from-dir="$CHE_PROJECTS_ROOT/cloud-native-workshop-v2m5-labs/services/go-nodejs-pet-id/app-vue/"
+----
+
+You can watch the build in the {{ CONSOLE_URL }}/topology/ns/{{ USER_ID }}-sso[Topology View^] of the {{ USER_ID }}-sso project:
+
+INSERT BUILD IMAGE HERE
 
 ### 5. Explore Applications
